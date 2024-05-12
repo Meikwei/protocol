@@ -1,0 +1,112 @@
+
+syntax = "proto3";
+package aetim.msggateway;
+import "sdkws/sdkws.proto";
+option go_package = "github.com/Meikwei/protocol/msggateway";
+
+// OnlinePushMsgReq 用于单用户在线推送消息的请求参数
+message OnlinePushMsgReq {
+  sdkws.MsgData msgData = 1; // 消息内容
+  string pushToUserID = 2; // 推送目标用户ID
+}
+
+// OnlinePushMsgResp 用于单用户在线推送消息的响应结果
+message OnlinePushMsgResp{
+    repeated SingleMsgToUserPlatform resp = 1; // 响应结果集合
+}
+
+// SingleMsgToUserResults 单个用户消息推送的结果
+message SingleMsgToUserResults {
+  string userID =1; // 用户ID
+  repeated SingleMsgToUserPlatform resp = 2; // 各平台推送结果
+  bool onlinePush = 3; // 是否成功推送在线消息
+}
+
+// OnlineBatchPushOneMsgReq 用于批量向单个用户推送消息的请求参数
+message OnlineBatchPushOneMsgReq{
+  sdkws.MsgData msgData = 1; // 消息内容
+  repeated string pushToUserIDs = 2; // 推送目标用户ID列表
+}
+
+// OnlineBatchPushOneMsgResp 用于批量向单个用户推送消息的响应结果
+message OnlineBatchPushOneMsgResp{
+  repeated SingleMsgToUserResults singlePushResult= 1; // 单个用户推送结果的集合
+}
+
+// SingleMsgToUserPlatform 单个用户在某个平台的消息推送结果
+message SingleMsgToUserPlatform{
+  int64   ResultCode = 1; // 结果码
+  string  RecvID = 2; // 接收消息的用户ID
+  int32   RecvPlatFormID = 3; // 接收消息的用户平台ID
+}
+
+// GetUsersOnlineStatusReq 用于查询用户在线状态的请求参数
+message GetUsersOnlineStatusReq{
+  repeated string  userIDs = 1; // 需要查询在线状态的用户ID列表
+}
+
+// GetUsersOnlineStatusResp 用于查询用户在线状态的响应结果
+message GetUsersOnlineStatusResp{
+  repeated SuccessResult successResult = 1; // 查询成功的用户在线状态结果
+  repeated FailedDetail failedResult = 2; // 查询失败的用户ID列表
+  message SuccessDetail{ // 单个用户某个平台的在线状态详情
+    string platform = 1; // 平台
+    string status = 2; // 在线状态
+    string connID = 3; // 连接ID
+    bool isBackground = 4; // 是否是后台
+    string token   =5; // 用户token
+  }
+  message FailedDetail{ // 查询失败的详细信息
+    string userID = 1; // 用户ID
+  }
+  message SuccessResult{ // 查询成功的用户在线状态汇总
+    string userID = 1; // 用户ID
+    string status = 2; // 用户整体在线状态
+    repeated SuccessDetail detailPlatformStatus = 3; // 各平台在线状态详情
+  }
+}
+
+// SingleDetail 单个用户多平台登录状态详情
+message SingleDetail{
+  string userID = 1; // 用户ID
+  string status = 2; // 在线状态
+  repeated SinglePlatformToken singlePlatformToken = 3; // 各平台登录token信息
+}
+
+// SinglePlatformToken 单个平台的登录token信息
+message SinglePlatformToken{
+  string platform = 1; // 平台标识
+   int32  total =2; // 登录token总数
+   repeated string token = 3; // 登录token列表
+}
+
+// KickUserOfflineReq 用于踢用户下线的请求参数
+message KickUserOfflineReq{
+  int32  platformID = 1; // 平台ID
+  repeated string kickUserIDList = 2; // 需要踢下的用户ID列表
+}
+
+// KickUserOfflineResp 用于踢用户下线的响应结果
+message KickUserOfflineResp{
+}
+
+// MultiTerminalLoginCheckReq 用于检查用户多终端登录的请求参数
+message MultiTerminalLoginCheckReq{
+    string userID = 1; // 用户ID
+    int32 platformID = 2; // 平台ID
+    string token = 3; // 用户token
+}
+
+// MultiTerminalLoginCheckResp 用于检查用户多终端登录的响应结果
+message MultiTerminalLoginCheckResp{
+}
+
+// msgGateway 定义了消息网关服务，提供多种消息相关操作的RPC接口
+service msgGateway {
+  rpc OnlinePushMsg(OnlinePushMsgReq) returns(OnlinePushMsgResp); // 向单个用户推送消息
+  rpc GetUsersOnlineStatus(GetUsersOnlineStatusReq) returns(GetUsersOnlineStatusResp); // 查询用户在线状态
+  rpc OnlineBatchPushOneMsg(OnlineBatchPushOneMsgReq) returns(OnlineBatchPushOneMsgResp); // 批量向单个用户推送消息
+  rpc SuperGroupOnlineBatchPushOneMsg(OnlineBatchPushOneMsgReq) returns(OnlineBatchPushOneMsgResp); // 超级群组批量向单个用户推送消息
+  rpc KickUserOffline(KickUserOfflineReq) returns(KickUserOfflineResp); // 踢用户下线
+  rpc MultiTerminalLoginCheck(MultiTerminalLoginCheckReq) returns(MultiTerminalLoginCheckResp); // 检查用户多终端登录状态
+}

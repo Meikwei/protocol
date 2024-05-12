@@ -2,7 +2,7 @@
 setlocal
 
 rem Define array elements
-set "PROTO_NAMES=user"
+set "PROTO_NAMES=third"
 
 rem Loop through each element in the array
 for %%i in (%PROTO_NAMES%) do (

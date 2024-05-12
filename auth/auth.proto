@@ -1,0 +1,76 @@
+syntax = "proto3";
+package aetim.auth;
+option go_package = "github.com/Meikwei/protocol/auth";
+
+
+// 定义用户令牌请求参数
+message userTokenReq {
+  string secret = 1; // 秘钥
+  int32  platformID = 2; // 平台ID
+  string userID = 3; // 用户ID
+}
+
+// 定义用户令牌响应参数
+message userTokenResp {
+  string token = 2; // 生成的用户令牌
+  int64  expireTimeSeconds = 3; // 令牌过期时间（秒）
+}
+
+// 定义强制登出请求参数
+message forceLogoutReq {
+  int32  platformID = 1; // 平台ID
+  string userID = 2; // 用户ID
+}
+
+// 定义强制登出响应参数
+message forceLogoutResp {
+}
+
+// 定义解析令牌请求参数
+message parseTokenReq{
+  string token = 1; // 待解析的令牌
+}
+
+// 定义解析令牌响应参数
+message parseTokenResp{
+  string userID = 1; // 解析出的用户ID
+  int32 platformID = 2; // 解析出的平台ID
+  int64 expireTimeSeconds = 4; // 令牌过期时间（秒）
+}
+
+// 定义获取用户令牌请求参数
+message getUserTokenReq{
+  int32  platformID = 1; // 平台ID
+  string userID = 2; // 用户ID
+}
+
+// 定义获取用户令牌响应参数
+message getUserTokenResp{
+  string token = 1; // 获取到的用户令牌
+  int64  expireTimeSeconds = 2; // 令牌过期时间（秒）
+}
+
+// 定义使令牌失效的请求参数
+message invalidateTokenReq{
+  string preservedToken = 1; // 待失效的令牌
+  string userID = 2; // 用户ID
+  int32 platformID = 3; // 平台ID
+}
+
+// 定义使令牌失效的响应参数
+message  invalidateTokenResp{
+}
+
+// 定义认证服务，提供用户令牌生成、获取、解析、强制登出和使令牌失效等功能
+service Auth {
+  // 生成用户令牌
+  rpc userToken(userTokenReq) returns(userTokenResp);
+  // 管理员获取用户令牌
+  rpc getUserToken(getUserTokenReq) returns(getUserTokenResp);
+  // 强制用户登出
+  rpc forceLogout(forceLogoutReq) returns(forceLogoutResp);
+  // 解析令牌获取用户信息
+  rpc parseToken(parseTokenReq) returns(parseTokenResp);
+  // 使令牌失效
+  rpc invalidateToken(invalidateTokenReq) returns(invalidateTokenResp);
+}

@@ -1,0 +1,56 @@
+// Copyright © 2023 aetim. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+package aetim.push;
+import "sdkws/sdkws.proto";
+option go_package = "github.com/Meikwei/protocol/push";
+
+// PushMsgReq 定义了推送消息请求的结构体
+// msgData 消息数据体，包含具体的消息内容
+// conversationID 对话ID，标识消息所属的对话
+message PushMsgReq {
+  sdkws.MsgData msgData = 1;
+  string conversationID = 2;
+}
+
+// PushMsgResp 定义了推送消息响应的结构体，目前为空，无需额外字段
+message PushMsgResp{
+}
+
+// DelUserPushTokenReq 定义了删除用户推送令牌请求的结构体
+// userID 用户ID，标识要删除令牌的用户
+// platformID 平台ID，标识用户所在的平台
+message DelUserPushTokenReq{
+  string userID = 1;
+  int32 platformID = 2;
+}
+
+// DelUserPushTokenResp 定义了删除用户推送令牌响应的结构体，目前为空，无需额外字段
+message DelUserPushTokenResp{
+}
+
+// PushMsgService 定义了推送消息相关的服务
+service PushMsgService {
+  // PushMsg 负责向指定用户推送消息
+  // req.PushMsgReq 包含推送的消息内容和对话ID
+  // 返回值 PushMsgResp 目前为空，表示操作完成
+  rpc PushMsg(PushMsgReq) returns(PushMsgResp);
+
+  // DelUserPushToken 负责删除指定用户在指定平台的推送令牌
+  // req.DelUserPushTokenReq 包含用户ID和平台ID
+  // 返回值 DelUserPushTokenResp 目前为空，表示操作完成
+  rpc DelUserPushToken(DelUserPushTokenReq) returns(DelUserPushTokenResp);
+}
+

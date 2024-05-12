@@ -1,4 +1,4 @@
-# Copyright © 2023 OpenIM. All rights reserved.
+# Copyright © 2023 aetim. All rights reserved.
 ###
  # @Author: zhangkaiwei 1126763237@qq.com
  # @Date: 2024-05-11 23:00:19

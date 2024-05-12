@@ -1,0 +1,256 @@
+syntax = "proto3";
+package aetim.friend;
+import "sdkws/sdkws.proto";
+import "wrapperspb/wrapperspb.proto";
+option go_package = "github.com/Meikwei/protocol/friend";
+
+// 请求获取分页好友信息
+message getPaginationFriendsReq{
+  aetim.sdkws.RequestPagination pagination = 1; // 分页参数
+  string userID = 2; // 用户ID
+}
+
+// 响应获取分页好友信息
+message getPaginationFriendsResp{
+  repeated aetim.sdkws.FriendInfo friendsInfo = 1; // 好友信息列表
+  int32 total = 2; // 总数
+}
+
+// 发起添加好友申请
+message applyToAddFriendReq{
+  string fromUserID = 1; // 申请人ID
+  string toUserID = 2; // 被申请者ID
+  string reqMsg = 3; // 申请消息
+  string ex = 4; // 扩展信息
+}
+
+// 响应添加好友申请（空消息体，可根据实际需要添加字段）
+message applyToAddFriendResp{
+}
+
+// 导入好友
+message importFriendReq{
+  string ownerUserID = 1; // 好友列表拥有者ID
+  repeated string friendUserIDs = 2; // 好友ID列表
+}
+
+// 响应导入好友（空消息体，可根据实际需要添加字段）
+message importFriendResp{
+}
+
+// 请求获取分页好友添加申请信息
+message getPaginationFriendsApplyToReq{
+  string userID = 1; // 用户ID
+  aetim.sdkws.RequestPagination pagination = 2; // 分页参数
+}
+
+// 响应获取分页好友添加申请信息
+message getPaginationFriendsApplyToResp{
+  repeated aetim.sdkws.FriendRequest FriendRequests = 1; // 好友申请列表
+  int32 total = 2; // 总数
+}
+
+// 请求获取指定好友添加申请信息
+message getDesignatedFriendsApplyReq{
+  string fromUserID = 1; // 申请人ID
+  string toUserID = 2; // 被申请者ID
+}
+
+// 响应获取指定好友添加申请信息
+message getDesignatedFriendsApplyResp{
+  repeated aetim.sdkws.FriendRequest friendRequests = 1; // 好友申请列表
+}
+
+// 请求获取指定好友信息
+message getDesignatedFriendsReq{
+  string ownerUserID = 1; // 好友列表拥有者ID
+  repeated string friendUserIDs = 2; // 好友ID列表
+}
+
+// 响应获取指定好友信息
+message getDesignatedFriendsResp{
+  repeated aetim.sdkws.FriendInfo friendsInfo = 1; // 好友信息列表
+}
+
+// 添加黑名单
+message addBlackReq{
+  string ownerUserID = 1; // 黑名单拥有者ID
+  string blackUserID = 2; // 被加入黑名单的用户ID
+  string ex = 3; // 扩展信息
+}
+
+// 响应添加黑名单（空消息体，可根据实际需要添加字段）
+message addBlackResp{
+}
+
+// 移除黑名单
+message removeBlackReq{
+  string ownerUserID = 1; // 黑名单拥有者ID
+  string blackUserID = 2; // 被移除黑名单的用户ID
+}
+
+// 响应移除黑名单（空消息体，可根据实际需要添加字段）
+message removeBlackResp{
+}
+
+// 请求获取分页黑名单信息
+message getPaginationBlacksReq{
+  string userID = 1; // 用户ID
+  aetim.sdkws.RequestPagination pagination = 2; // 分页参数
+}
+
+// 响应获取分页黑名单信息
+message getPaginationBlacksResp{
+  repeated aetim.sdkws.BlackInfo blacks = 1; // 黑名单信息列表
+  int32 total = 2; // 总数
+}
+
+// 判断是否为好友
+message isFriendReq{
+  string userID1 = 1; // 用户ID1
+  string userID2 = 2; // 用户ID2
+}
+
+// 响应判断是否为好友
+message isFriendResp{
+  bool inUser1Friends = 1; // userID2是否在userID1的好友列表中
+  bool inUser2Friends = 2; // userID1是否在userID2的好友列表中
+}
+
+// 判断是否在黑名单中
+message isBlackReq{
+  string userID1 = 1; // 用户ID1
+  string userID2 = 2; // 用户ID2
+}
+
+// 响应判断是否在黑名单中
+message isBlackResp{
+  bool inUser1Blacks = 1; // userID2是否在userID1的黑名单中
+  bool inUser2Blacks = 2; // userID1是否在userID2的黑名单中
+}
+
+// 删除好友
+message deleteFriendReq{
+  string ownerUserID = 1; // 好友列表拥有者ID
+  string friendUserID = 2; // 被删除好友的ID
+}
+
+// 响应删除好友（空消息体，可根据实际需要添加字段）
+message deleteFriendResp{
+}
+
+// 处理好友申请
+message respondFriendApplyReq{
+  string fromUserID = 1; // 申请人ID
+  string toUserID = 2; // 被申请者ID
+  int32 handleResult = 3; // 处理结果（如：接受、拒绝）
+  string handleMsg = 4; // 处理消息
+}
+
+// 响应处理好友申请（空消息体，可根据实际需要添加字段）
+message respondFriendApplyResp{
+}
+
+// updateFriendsReq 用于更新好友信息的请求参数
+message updateFriendsReq{
+  string ownerUserID = 1; // 主体用户的ID
+  repeated string friendUserIDs = 2; // 好友用户ID列表
+  aetim.protobuf.BoolValue isPinned = 3; // 是否置顶
+  aetim.protobuf.StringValue remark = 4; // 备注
+  aetim.protobuf.StringValue ex = 5; // 扩展信息
+}
+
+// updateFriendsResp 用于更新好友信息的响应参数
+message updateFriendsResp{
+
+}
+
+// setFriendRemarkReq 用于设置好友备注的请求参数
+message setFriendRemarkReq{
+  string ownerUserID = 1; // 主体用户的ID
+  string friendUserID = 2; // 好友的用户ID
+  string remark = 3; // 备注信息
+}
+
+// setFriendRemarkResp 用于设置好友备注的响应参数
+message setFriendRemarkResp{
+}
+
+// getPaginationFriendsApplyFromReq 用于获取好友申请信息的请求参数
+message getPaginationFriendsApplyFromReq{
+  string userID = 1; // 用户ID
+  aetim.sdkws.RequestPagination pagination = 2; // 分页参数
+}
+
+// getPaginationFriendsApplyFromResp 用于获取好友申请信息的响应参数
+message getPaginationFriendsApplyFromResp{
+  repeated aetim.sdkws.FriendRequest friendRequests = 1; // 好友申请列表
+  int32 total = 2; // 总数
+}
+
+// getFriendIDsReq 用于获取用户好友ID列表的请求参数
+message getFriendIDsReq {
+  string userID = 1; // 用户ID
+}
+
+// getFriendIDsResp 用于获取用户好友ID列表的响应参数
+message getFriendIDsResp {
+  repeated string friendIDs = 1; // 好友ID列表
+}
+
+// getSpecifiedFriendsInfoReq 用于获取指定好友信息的请求参数
+message getSpecifiedFriendsInfoReq {
+  string ownerUserID = 1; // 主体用户的ID
+  repeated string userIDList = 2; // 需要获取信息的用户ID列表
+}
+
+// getSpecifiedFriendsInfoInfo 包含用户的基本信息、好友信息和黑名单信息
+message getSpecifiedFriendsInfoInfo {
+  aetim.sdkws.UserInfo userInfo = 1; // 用户基本信息
+  aetim.sdkws.FriendInfo friendInfo = 2; // 好友信息
+  aetim.sdkws.BlackInfo blackInfo = 3; // 黑名单信息
+}
+
+// getSpecifiedFriendsInfoResp 用于获取指定好友信息的响应参数
+message getSpecifiedFriendsInfoResp {
+  repeated getSpecifiedFriendsInfoInfo infos = 1; // 指定好友的信息列表
+}
+
+service friend{
+  //申请加好友
+  rpc applyToAddFriend(applyToAddFriendReq) returns(applyToAddFriendResp);
+  //获取收到的好友申请列表
+  rpc getPaginationFriendsApplyTo(getPaginationFriendsApplyToReq) returns(getPaginationFriendsApplyToResp);
+  //获取主动发出去的好友申请列表
+  rpc getPaginationFriendsApplyFrom(getPaginationFriendsApplyFromReq) returns(getPaginationFriendsApplyFromResp);
+  //获取指定好友申请
+  rpc getDesignatedFriendsApply(getDesignatedFriendsApplyReq) returns(getDesignatedFriendsApplyResp);
+  //添加黑名单
+  rpc addBlack(addBlackReq) returns(addBlackResp);
+  //移除黑名单
+  rpc removeBlack(removeBlackReq) returns(removeBlackResp);
+  //判断是否好友关系
+  rpc isFriend(isFriendReq) returns(isFriendResp);
+  //判断是否在黑名单中
+  rpc isBlack(isBlackReq) returns(isBlackResp);
+  //获取黑名单列表
+  rpc getPaginationBlacks(getPaginationBlacksReq) returns(getPaginationBlacksResp);
+  //删除好友
+  rpc deleteFriend(deleteFriendReq) returns(deleteFriendResp);
+  //对好友申请响应（同意或拒绝）
+  rpc respondFriendApply(respondFriendApplyReq) returns(respondFriendApplyResp);
+  //星标好友
+  rpc updateFriends(updateFriendsReq) returns(updateFriendsResp);
+  //设置好友备注
+  rpc setFriendRemark(setFriendRemarkReq) returns(setFriendRemarkResp);
+  //导入好友关系
+  rpc importFriends(importFriendReq)  returns(importFriendResp);
+  //翻页获取好友列表 无结果不返回错误
+  rpc getDesignatedFriends(getDesignatedFriendsReq) returns(getDesignatedFriendsResp);
+  //获取指定好友信息 有id不存在也返回错误
+  rpc getPaginationFriends(getPaginationFriendsReq) returns (getPaginationFriendsResp);
+  // 获取好友ID列表
+  rpc getFriendIDs(getFriendIDsReq) returns (getFriendIDsResp);
+  // 获取指定好友信息
+  rpc GetSpecifiedFriendsInfo(getSpecifiedFriendsInfoReq) returns (getSpecifiedFriendsInfoResp);
+}

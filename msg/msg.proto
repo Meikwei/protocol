@@ -1,0 +1,476 @@
+// Copyright © 2023 aetim. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+package aetim.msg;
+import "sdkws/sdkws.proto";
+option go_package = "github.com/Meikwei/protocol/msg";
+
+// MsgDataToMQ 用于将消息数据发送到消息队列
+// token: 鉴权token
+// msgData: 需要发送的消息数据
+message MsgDataToMQ{
+  string token = 1;
+  sdkws.MsgData msgData = 2;
+}
+
+// MsgDataToDB 用于将消息数据存储到数据库
+// msgData: 需要存储的消息数据
+message MsgDataToDB {
+  sdkws.MsgData msgData = 1;
+}
+
+// PushMsgDataToMQ 用于向消息队列推送消息数据
+// msgData: 需要推送的消息数据
+// conversationID: 对话ID
+message PushMsgDataToMQ{
+  sdkws.MsgData msgData = 1;
+  string conversationID = 2;
+}
+
+// MsgDataToMongoByMQ 用于通过消息队列将消息数据存储到MongoDB
+// lastSeq: 最后一条消息的序列号
+// conversationID: 对话ID
+// msgData: 需要存储的消息数据集合
+message MsgDataToMongoByMQ{
+  int64 lastSeq = 1;
+  string conversationID = 2;
+  repeated sdkws.MsgData msgData = 3;
+}
+
+// GetMaxAndMinSeqReq 用于请求获取最大和最小的序列号
+// UserID: 用户ID
+message GetMaxAndMinSeqReq {
+  string UserID = 1;
+}
+
+// GetMaxAndMinSeqResp 用于响应最大和最小的序列号
+// MaxSeq: 最大序列号
+// MinSeq: 最小序列号
+message GetMaxAndMinSeqResp {
+  int64 MaxSeq = 1;
+  int64 MinSeq = 2;
+}
+
+// SendMsgReq 用于发送消息的请求
+// msgData: 需要发送的消息数据
+message SendMsgReq {
+  sdkws.MsgData msgData = 3;
+}
+
+// SendMsgResp 用于发送消息的响应
+// serverMsgID: 服务器消息ID
+// clientMsgID: 客户端消息ID
+// sendTime: 发送时间
+message SendMsgResp {
+  string serverMsgID = 1;
+  string clientMsgID = 2;
+  int64  sendTime = 3;
+}
+
+// SetSendMsgStatusReq 用于设置消息发送状态的请求
+// status: 消息发送状态
+message SetSendMsgStatusReq{
+  int32 status = 1;
+}
+
+// SetSendMsgStatusResp 用于设置消息发送状态的响应
+message SetSendMsgStatusResp{
+}
+
+// GetSendMsgStatusReq 用于获取消息发送状态的请求
+message GetSendMsgStatusReq{
+}
+
+// GetSendMsgStatusResp 用于获取消息发送状态的响应
+// status: 消息发送状态
+message GetSendMsgStatusResp{
+  int32 status = 1;
+}
+
+// MsgDataToModifyByMQ 用于通过消息队列修改消息数据
+// messages: 需要修改的消息数据集合
+// conversationID: 对话ID
+message MsgDataToModifyByMQ{
+  repeated sdkws.MsgData messages = 1;
+  string conversationID = 2;
+}
+
+// DelMsgsReq 用于删除消息的请求
+message DelMsgsReq{
+}
+
+// DelMsgsResp 用于删除消息的响应
+message DelMsgsResp{
+}
+
+// RevokeMsgReq 用于撤销消息的请求
+// conversationID: 对话ID
+// seq: 消息序列号
+// userID: 用户ID
+message RevokeMsgReq {
+  string conversationID = 1;
+  int64 seq = 2;
+  string userID = 3;
+}
+
+// RevokeMsgResp 用于撤销消息的响应
+message RevokeMsgResp {
+}
+
+// MarkMsgsAsReadReq 用于标记消息为已读的请求
+// conversationID: 对话ID
+// seqs: 消息序列号集合
+// userID: 用户ID
+message MarkMsgsAsReadReq {
+  string conversationID = 1;
+  repeated int64 seqs = 2;
+  string userID = 3;
+}
+
+// MarkMsgsAsReadResp 用于标记消息为已读的响应
+message MarkMsgsAsReadResp {
+}
+
+// MarkConversationAsReadReq 用于标记会话为已读的请求
+// conversationID: 对话ID
+// userID: 用户ID
+// hasReadSeq: 已读的最新序列号
+// seqs: 需要标记为已读的消息序列号集合
+message MarkConversationAsReadReq {
+  string conversationID = 1;
+  string userID = 2;
+  int64 hasReadSeq = 3;
+  repeated int64 seqs = 4;
+}
+
+// MarkConversationAsReadResp 用于标记会话为已读的响应
+message MarkConversationAsReadResp {
+}
+
+// SetConversationHasReadSeqReq 用于设置对话已读序列号的请求
+// conversationID: 对话ID
+// userID: 用户ID
+// hasReadSeq: 已读的最新序列号
+message SetConversationHasReadSeqReq {
+  string conversationID = 1;
+  string userID = 2;
+  int64 hasReadSeq = 3;
+}
+
+// SetConversationHasReadSeqResp 用于设置对话已读序列号的响应
+message SetConversationHasReadSeqResp {
+}
+
+// DeleteSyncOpt 用于删除消息的同步选项
+// IsSyncSelf: 是否同步自身
+// IsSyncOther: 是否同步其他设备
+message DeleteSyncOpt {
+  bool IsSyncSelf = 3;
+  bool IsSyncOther = 4;
+}
+
+// ClearConversationsMsgReq 用于清除对话消息的请求
+// conversationIDs: 对话ID集合
+// userID: 用户ID
+// deleteSyncOpt: 删除消息的同步选项
+message ClearConversationsMsgReq {
+  repeated string conversationIDs = 1;
+  string userID = 2;
+  DeleteSyncOpt deleteSyncOpt = 3;
+}
+
+// ClearConversationsMsgResp 用于清除对话消息的响应
+message ClearConversationsMsgResp {
+}
+
+// UserClearAllMsgReq 用于用户清除所有消息的请求
+// userID: 用户ID
+// deleteSyncOpt: 删除消息的同步选项
+message UserClearAllMsgReq {
+  string userID = 1;
+  DeleteSyncOpt deleteSyncOpt = 3;
+}
+
+// UserClearAllMsgResp 用于用户清除所有消息的响应
+message UserClearAllMsgResp {
+}
+
+// DeleteMsgsReq 用于删除消息的请求
+// conversationID: 对话ID
+// seqs: 消息序列号集合
+// userID: 用户ID
+// deleteSyncOpt: 删除消息的同步选项
+message DeleteMsgsReq {
+  string conversationID = 1;
+  repeated int64 seqs = 2;
+  string userID = 3;
+  DeleteSyncOpt deleteSyncOpt = 4;
+}
+
+// DeleteMsgsResp 用于删除消息的响应
+message DeleteMsgsResp {
+}
+
+// DeleteMsgPhysicalReq 用于物理删除消息的请求
+// conversationIDs: 对话ID集合
+// timestamp: 删除时间戳
+message DeleteMsgPhysicalReq {
+  repeated string conversationIDs = 1;
+  int64 timestamp = 2;
+}
+
+// DeleteMsgPhysicalResp 用于物理删除消息的响应
+message DeleteMsgPhysicalResp {
+}
+
+// DeleteMsgPhysicalBySeqReq 用于通过序列号物理删除消息的请求
+// conversationID: 对话ID
+// seqs: 消息序列号集合
+message DeleteMsgPhysicalBySeqReq {
+  string conversationID = 1;
+  repeated int64 seqs = 2;
+}
+
+// DeleteMsgPhysicalBySeqResp 用于通过序列号物理删除消息的响应
+message DeleteMsgPhysicalBySeqResp {
+
+}
+
+// GetMaxSeqsReq 用于获取对话最大序列号的请求
+// conversationIDs: 对话ID集合
+message GetMaxSeqsReq{
+  repeated string conversationIDs=2;
+}
+
+// GetHasReadSeqsReq 用于获取用户对话已读序列号的请求
+// userID: 用户ID
+// conversationIDs: 对话ID集合
+message GetHasReadSeqsReq{
+  string userID=1;
+  repeated string conversationIDs=2;
+}
+
+// SeqsInfoResp 用于存储对话最大序列号信息的响应
+// maxSeqs: 对话ID与最大序列号的映射
+message SeqsInfoResp{
+  map<string, int64> maxSeqs = 1;
+}
+
+// GetMsgByConversationIDsReq 用于根据对话ID获取消息数据的请求
+// conversationIDs: 对话ID集合
+// maxSeqs: 对话的最大序列号映射
+message GetMsgByConversationIDsReq{
+  repeated string conversationIDs=1;
+  map<string, int64> maxSeqs = 2;
+}
+
+// GetMsgByConversationIDsResp 用于根据对话ID获取消息数据的响应
+// msgDatas: 对话ID与消息数据的映射
+message GetMsgByConversationIDsResp{
+  map<string,sdkws.MsgData> msgDatas=1;
+}
+
+// GetConversationMaxSeqReq 用于获取对话最大序列号的请求
+// conversationID: 对话ID
+message GetConversationMaxSeqReq {
+  string conversationID = 1;
+}
+
+// GetConversationMaxSeqResp 用于获取对话最大序列号的响应
+// maxSeq: 对话的最大序列号
+message GetConversationMaxSeqResp {
+  int64 maxSeq = 1;
+}
+
+// GetConversationsHasReadAndMaxSeqReq 用于获取用户对话的已读状态和最大序列号的请求
+// userID: 用户ID
+// conversationIDs: 对话ID集合
+message GetConversationsHasReadAndMaxSeqReq {
+  string userID = 1;
+  repeated string conversationIDs = 2;
+}
+
+// Seqs 消息结构定义了与序列相关的最大值和已读信息
+message Seqs {
+  int64 maxSeq = 1; // 最大序列号
+  int64 hasReadSeq = 2; // 已读序列号
+}
+
+// GetConversationsHasReadAndMaxSeqResp 定义了获取对话的已读和最大序列号的响应消息
+message GetConversationsHasReadAndMaxSeqResp {
+  map<string, Seqs> seqs = 1; // 对话与序列号的映射
+}
+
+// GetActiveUserReq 定义了获取活跃用户的请求消息
+message GetActiveUserReq {
+  int64 start = 1; // 开始时间
+  int64 end = 2; // 结束时间
+  bool ase = 3; // 是否按时间排序
+  bool group = 4; // 是否为群组
+  sdkws.RequestPagination pagination = 5; // 分页信息
+}
+
+// ActiveUser 定义了活跃用户的消息结构
+message ActiveUser {
+  sdkws.UserInfo user = 1; // 用户信息
+  int64 count = 2; // 活跃次数
+}
+
+// GetActiveUserResp 定义了获取活跃用户的响应消息
+message GetActiveUserResp {
+  int64 msgCount = 1; // 消息总数
+  int64 userCount = 2; // 用户总数
+  map<string, int64> dateCount = 3; // 按日期统计的活跃用户数
+  repeated ActiveUser users = 4; // 活跃用户列表
+}
+
+// GetActiveGroupReq 定义了获取活跃群组的请求消息
+message GetActiveGroupReq {
+  int64 start = 1; // 开始时间
+  int64 end = 2; // 结束时间
+  bool ase = 3; // 是否按时间排序
+  sdkws.RequestPagination pagination = 4; // 分页信息
+}
+
+// ActiveGroup 定义了活跃群组的消息结构
+message ActiveGroup {
+  sdkws.GroupInfo group = 1; // 群组信息
+  int64 count = 2; // 活跃次数
+}
+
+// GetActiveGroupResp 定义了获取活跃群组的响应消息
+message GetActiveGroupResp {
+  int64 msgCount = 1; // 消息总数
+  int64 groupCount = 2; // 群组总数
+  map<string, int64> dateCount = 3; // 按日期统计的活跃群组数
+  repeated ActiveGroup groups = 4; // 活跃群组列表
+}
+
+// SearchMessageReq 定义了搜索消息的请求消息
+message SearchMessageReq{
+  string sendID=1; // 发送者ID
+  string recvID=2; // 接收者ID
+  int32 contentType=3; // 消息内容类型
+  string sendTime=4; // 发送时间
+  int32 sessionType=5; // 会话类型
+  sdkws.RequestPagination pagination = 6; // 分页信息
+}
+
+// SearchMessageResp 定义了搜索消息的响应消息
+message SearchMessageResp{
+  repeated ChatLog chatLogs=1; // 消息日志列表
+  int32 chatLogsNum = 2; // 消息日志数量
+}
+
+// ChatLog 定义了单条聊天日志的消息结构
+message ChatLog {
+  string serverMsgID = 1; // 服务器消息ID
+  string clientMsgID = 2; // 客户端消息ID
+  string sendID = 3; // 发送者ID
+  string recvID = 4; // 接收者ID
+  string groupID = 5; // 群组ID
+  string recvNickname = 6; // 接收者昵称
+  int32 senderPlatformID = 7; // 发送者平台ID
+  string senderNickname = 8; // 发送者昵称
+  string senderFaceURL = 9; // 发送者头像URL
+  string groupName = 10; // 群组名称
+  int32 sessionType = 11; // 会话类型
+  int32 msgFrom = 12; // 消息来源
+  int32 contentType = 13; // 消息内容类型
+  string content = 14; // 消息内容
+  int32 status = 15; // 消息状态
+  int64 sendTime = 16; // 发送时间
+  int64 createTime = 17; // 创建时间
+  string ex = 18; // 扩展字段
+  string groupFaceURL=19; // 群组头像URL
+  uint32 groupMemberCount=20; // 群组成员数量
+  int64 seq=21; // 序列号
+  string groupOwner=22; // 群组拥有者
+  int32 groupType=23; // 群组类型
+}
+
+// batchSendMessageReq 定义了批量发送消息的请求消息
+message batchSendMessageReq{
+  repeated string recvIDList=1; // 接收者ID列表
+  sdkws.MsgData msgData = 2; // 消息数据
+}
+
+// batchSendMessageResp 定义了批量发送消息的响应消息
+message batchSendMessageResp{
+}
+
+// GetServerTimeReq 定义了获取服务器时间的请求消息
+message GetServerTimeReq{
+
+}
+
+// GetServerTimeResp 定义了获取服务器时间的响应消息
+message GetServerTimeResp{
+  int64 serverTime=1; // 服务器时间
+}
+
+// ClearMsgReq 定义了清除消息的请求消息
+message ClearMsgReq{
+    int64 timestamp =1; // 时间戳
+}
+
+// ClearMsgResp 定义了清除消息的响应消息
+message ClearMsgResp{
+}
+
+service msg {
+  //获取最小最大seq（包括用户的，以及指定群组的）
+  rpc GetMaxSeq(sdkws.GetMaxSeqReq) returns(sdkws.GetMaxSeqResp);
+  //获取会话列表的最大seq
+  rpc GetMaxSeqs(GetMaxSeqsReq)returns(SeqsInfoResp);
+  //获取会话列表已读的最大seq
+  rpc GetHasReadSeqs(GetHasReadSeqsReq)returns(SeqsInfoResp);
+  //获取最新消息
+  rpc GetMsgByConversationIDs(GetMsgByConversationIDsReq)returns(GetMsgByConversationIDsResp);
+  rpc GetConversationMaxSeq(GetConversationMaxSeqReq) returns(GetConversationMaxSeqResp);
+  //拉取历史消息（包括用户的，以及指定群组的）
+  rpc PullMessageBySeqs(sdkws.PullMessageBySeqsReq) returns(sdkws.PullMessageBySeqsResp);
+  rpc SearchMessage(SearchMessageReq) returns(SearchMessageResp);
+  //发送消息
+  rpc SendMsg(SendMsgReq) returns(SendMsgResp);
+
+  // 全量清空指定会话消息 重置min seq 比最大seq大1
+  rpc ClearConversationsMsg(ClearConversationsMsgReq) returns(ClearConversationsMsgResp);
+  // 删除用户全部消息 重置min seq 比最大seq大1
+  rpc UserClearAllMsg(UserClearAllMsgReq) returns(UserClearAllMsgResp);
+  // 用户标记删除部分消息by Seq
+  rpc DeleteMsgs(DeleteMsgsReq) returns(DeleteMsgsResp);
+  // seq物理删除消息
+  rpc DeleteMsgPhysicalBySeq(DeleteMsgPhysicalBySeqReq) returns(DeleteMsgPhysicalBySeqResp);
+  // 物理删除消息by 时间
+  rpc DeleteMsgPhysical(DeleteMsgPhysicalReq) returns(DeleteMsgPhysicalResp);
+
+  //设置消息是否发送成功-针对api发送的消息
+  rpc SetSendMsgStatus(SetSendMsgStatusReq) returns(SetSendMsgStatusResp);
+  //获取消息发送状态
+  rpc GetSendMsgStatus(GetSendMsgStatusReq) returns(GetSendMsgStatusResp);
+  rpc RevokeMsg(RevokeMsgReq) returns(RevokeMsgResp);
+  // mark as read
+  rpc MarkMsgsAsRead(MarkMsgsAsReadReq) returns(MarkMsgsAsReadResp);
+  rpc MarkConversationAsRead(MarkConversationAsReadReq) returns(MarkConversationAsReadResp);
+  rpc SetConversationHasReadSeq(SetConversationHasReadSeqReq) returns(SetConversationHasReadSeqResp);
+
+  rpc GetConversationsHasReadAndMaxSeq(GetConversationsHasReadAndMaxSeqReq) returns(GetConversationsHasReadAndMaxSeqResp);
+  rpc GetActiveUser(GetActiveUserReq) returns(GetActiveUserResp);
+  rpc GetActiveGroup(GetActiveGroupReq) returns(GetActiveGroupResp);
+  rpc GetServerTime(GetServerTimeReq) returns(GetServerTimeResp);
+
+  rpc ClearMsg(ClearMsgReq) returns(ClearMsgResp);
+}

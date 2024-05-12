@@ -1,0 +1,390 @@
+syntax = "proto3";
+package aetim.rtc;
+import "sdkws/sdkws.proto";
+option go_package = "github.com/Meikwei/protocol/rtc";
+
+// 定义参与者的元数据
+message ParticipantMetaData{
+  aetim.sdkws.GroupInfo groupInfo = 1; // 群组信息
+  aetim.sdkws.GroupMemberFullInfo groupMemberInfo = 2; // 群组成员完整信息
+  aetim.sdkws.PublicUserInfo userInfo = 3; // 用户公开信息
+}
+
+// 获取加入房间的令牌请求
+message GetJoinTokenReq{
+  string room = 1; // 房间标识
+  string identity = 2; // 身份标识
+  ParticipantMetaData metaData = 3; // 参与者元数据
+}
+
+// 获取加入房间的令牌响应
+message GetJoinTokenResp{
+  string jwt = 1; // JSON Web Token
+  string liveURL = 2; // 直播URL
+}
+
+// 信号请求，包含多种类型的信号
+message SignalReq {
+  oneof payload {
+    SignalInviteReq invite = 1; // 邀请信号
+    SignalInviteInGroupReq inviteInGroup= 2; // 群组内邀请信号
+    SignalCancelReq cancel = 3; // 取消信号
+    SignalAcceptReq accept = 4; // 接受信号
+    SignalHungUpReq hungUp = 5; // 挂断信号
+    SignalRejectReq reject = 6; // 拒绝信号
+    SignalGetTokenByRoomIDReq getTokenByRoomID = 7; // 通过房间ID获取令牌信号
+  }
+}
+
+// 发送自定义信号请求
+message SignalSendCustomSignalReq {
+  string roomID = 1; // 房间ID
+  string customInfo = 2; // 自定义信息
+}
+
+// 发送自定义信号响应
+message SignalSendCustomSignalResp {
+}
+
+// 流变化信号请求
+message SignalOnStreamChangeReq {
+  string roomID = 1; // 房间ID
+  string streamType = 2; // 流类型
+  bool mute = 3; // 是否静音
+}
+
+// 信号响应，包含多种类型的信号响应
+message SignalResp {
+  oneof payload {
+    SignalInviteResp invite = 1; // 邀请响应
+    SignalInviteInGroupResp inviteInGroup= 2; // 群组内邀请响应
+    SignalCancelResp cancel = 3; // 取消响应
+    SignalAcceptResp accept = 4; // 接受响应
+    SignalHungUpResp hungUp = 5; // 挂断响应
+    SignalRejectResp reject = 6; // 拒绝响应
+    SignalGetTokenByRoomIDResp getTokenByRoomID = 7; // 通过房间ID获取令牌响应
+  }
+}
+
+// 邀请信息
+message InvitationInfo  {
+  string inviterUserID = 1; // 邀请者用户ID
+  repeated string inviteeUserIDList = 2; // 被邀请者用户ID列表
+  string customData = 3; // 自定义数据
+  string  groupID = 4; // 群组ID
+  string roomID = 5; // 房间ID
+  int32 timeout = 6; // 超时时间
+  string mediaType = 7; // 媒体类型
+  int32 platformID = 8; // 平台ID
+  int32 sessionType = 9; // 会话类型
+  int64 initiateTime = 10; // 发起时间
+  repeated string busyLineUserIDList = 11; // 忙线用户ID列表
+}
+
+// 邀请请求
+message SignalInviteReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  ParticipantMetaData participant = 3; // 参与者元数据
+  string userID = 4; // 用户ID
+}
+
+// 邀请响应
+message SignalInviteResp {
+  string token = 1; // 令牌
+  string roomID = 2; // 房间ID
+  string liveURL = 3; // 直播URL
+  repeated string busyLineUserIDList = 4; // 忙线用户ID列表
+}
+
+// 群组内邀请请求
+message SignalInviteInGroupReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  ParticipantMetaData participant = 3; // 参与者元数据
+  string userID = 4; // 用户ID
+}
+
+// 群组内邀请响应
+message SignalInviteInGroupResp {
+  string token = 1; // 令牌
+  string roomID = 2; // 房间ID
+  string liveURL = 3; // 直播URL
+  repeated string busyLineUserIDList = 4; // 忙线用户ID列表
+}
+
+// 取消请求
+message SignalCancelReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  ParticipantMetaData participant = 3; // 参与者元数据
+  string userID = 4; // 用户ID
+}
+
+// 取消响应
+message SignalCancelResp {
+
+}
+
+// 接受请求
+message SignalAcceptReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  ParticipantMetaData participant = 3; // 参与者元数据
+  int32 opUserPlatformID = 4; // 操作用户平台ID
+  string userID = 5; // 用户ID
+}
+
+// 接受响应
+message SignalAcceptResp {
+  string token = 1; // 令牌
+  string roomID = 2; // 房间ID
+  string liveURL = 3; // 直播URL
+}
+
+// 挂断请求
+message SignalHungUpReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  string userID = 3; // 用户ID
+}
+
+// 挂断响应
+message SignalHungUpResp {
+
+}
+
+// 拒绝请求
+message SignalRejectReq {
+  InvitationInfo invitation = 1; // 邀请信息
+  sdkws.OfflinePushInfo offlinePushInfo  = 2; // 离线推送信息
+  ParticipantMetaData participant = 3; // 参与者元数据
+  int32 opUserPlatformID = 4; // 操作用户平台ID
+  string userID = 5; // 用户ID
+}
+
+// SignalRejectResp 定义了一个信号拒绝响应的消息体，目前为空。
+message SignalRejectResp {
+
+}
+
+// SignalGetRoomByGroupIDReq 请求通过群组ID获取房间信息。
+// groupID: 群组的唯一标识符。
+message SignalGetRoomByGroupIDReq {
+  string groupID = 1;
+}
+
+// SignalGetRoomByGroupIDResp 返回通过群组ID获取的房间信息。
+// invitation: 邀请信息。
+// participant: 参与者元数据列表。
+// roomID: 房间的唯一标识符。
+message SignalGetRoomByGroupIDResp {
+  InvitationInfo invitation = 1;
+  repeated ParticipantMetaData participant = 2;
+  string roomID = 3;
+}
+
+// SignalOnRoomParticipantConnectedReq 当房间内参与者连接时发出的请求。
+// invitation: 邀请信息。
+// participant: 参与者元数据列表。
+// groupID: 群组的唯一标识符。
+message SignalOnRoomParticipantConnectedReq {
+  InvitationInfo invitation = 1;
+  repeated ParticipantMetaData participant = 2;
+  string groupID = 3;
+}
+
+// SignalOnRoomParticipantDisconnectedReq 当房间内参与者断开连接时发出的请求。
+// invitation: 邀请信息。
+// participant: 参与者元数据列表。
+// groupID: 群组的唯一标识符。
+message SignalOnRoomParticipantDisconnectedReq {
+  InvitationInfo invitation = 1;
+  repeated ParticipantMetaData participant = 2;
+  string groupID = 3;
+}
+
+// SignalGetTokenByRoomIDReq 请求通过房间ID获取令牌。
+// roomID: 房间的唯一标识符。
+// participant: 参与者的元数据。
+// userID: 用户的唯一标识符。
+message SignalGetTokenByRoomIDReq {
+  string roomID = 1;
+  ParticipantMetaData participant = 2;
+  string userID = 3;
+}
+
+// SignalGetTokenByRoomIDResp 返回通过房间ID获取的令牌和直播URL。
+// token: 访问令牌。
+// liveURL: 直播的URL。
+message SignalGetTokenByRoomIDResp {
+  string token = 1;
+  string liveURL = 2;
+}
+
+// SignalMessageAssembleReq 组装信号请求消息。
+// signalReq: 信号请求体。
+message SignalMessageAssembleReq {
+  SignalReq signalReq = 1;
+}
+
+// SignalMessageAssembleResp 组装信号响应消息。
+// signalResp: 信号响应体。
+message SignalMessageAssembleResp {
+  SignalResp signalResp = 1;
+}
+
+// SignalGetRoomsReq 请求获取多个房间的信息。
+// roomIDs: 房间的唯一标识符列表。
+message SignalGetRoomsReq {
+  repeated string roomIDs = 1;
+}
+
+// SignalGetRoomsResp 返回多个房间的信息。
+// roomList: 房间信息列表。
+message SignalGetRoomsResp {
+  repeated SignalGetRoomByGroupIDResp roomList = 1;
+}
+
+// GetSignalInvitationInfoReq 请求获取信号邀请信息。
+// roomID: 房间的唯一标识符。
+message GetSignalInvitationInfoReq {
+  string roomID = 1;
+}
+
+// GetSignalInvitationInfoResp 返回信号邀请信息。
+// invitationInfo: 邀请信息。
+// offlinePushInfo: 离线推送信息。
+message GetSignalInvitationInfoResp {
+  InvitationInfo invitationInfo = 1;
+  sdkws.OfflinePushInfo offlinePushInfo = 2;
+}
+
+// GetSignalInvitationInfoStartAppReq 请求在启动应用时获取信号邀请信息。
+// userID: 用户的唯一标识符。
+message GetSignalInvitationInfoStartAppReq {
+  string userID = 1;
+}
+
+// GetSignalInvitationInfoStartAppResp 返回在启动应用时的信号邀请信息。
+// invitation: 邀请信息。
+// offlinePushInfo: 离线推送信息。
+message GetSignalInvitationInfoStartAppResp {
+  InvitationInfo invitation = 1;
+  sdkws.OfflinePushInfo offlinePushInfo = 2;
+}
+
+// SignalUser 定义了一个用户的消息体。
+// userID: 用户的唯一标识符。
+// nickname: 用户的昵称。
+// status: 用户的状态。
+message SignalUser {
+  string userID = 1;
+  string nickname = 2;
+  int32 status = 3;
+}
+
+// SignalRecord 定义了一个信号记录的消息体。
+// roomID: 房间的唯一标识符。
+// sID: 信号的ID。
+// fileName: 文件名。
+// mediaType: 媒体类型。
+// sessionType: 会话类型。
+// inviterUserID: 邀请者的用户ID。
+// inviterUserNickname: 邀请者的昵称。
+// groupID: 群组的唯一标识符。
+// groupName: 群组的名称。
+// inviterUsers: 邀请者用户列表。
+// createTime: 创建时间。
+// endTime: 结束时间。
+// size: 文件大小。
+// fileURL: 文件URL。
+message SignalRecord {
+  string roomID = 1;
+  string sID = 2;
+  string fileName = 3;
+  string mediaType = 4;
+  int32 sessionType = 5;
+  string inviterUserID = 6;
+  string inviterUserNickname = 7;
+  string groupID = 8;
+  string groupName = 9;
+  repeated SignalUser inviterUsers = 10;
+  int64 createTime = 11;
+  int64 endTime = 12;
+  string size = 13;
+  string fileURL = 14;
+}
+
+// FileRecord 定义了一个文件记录的消息体。
+// size: 文件大小。
+// fileURL: 文件URL。
+message FileRecord {
+  string size = 1;
+  string fileURL = 2;
+}
+
+// GetSignalInvitationRecordsReq 请求获取信号邀请记录。
+// pagination: 分页参数。
+// sessionType: 会话类型。
+// sendID: 发送者的ID。
+// recvID: 接收者的ID。
+// startTime: 开始时间。
+// endTime: 结束时间。
+// JoinedUsers: 加入的用户列表。
+message GetSignalInvitationRecordsReq {
+  sdkws.RequestPagination pagination = 1;
+  int32 sessionType = 2;
+  string sendID = 3;
+  string recvID = 4;
+  int64 startTime = 5;
+  int64 endTime = 6;
+  repeated sdkws.UserInfo JoinedUsers = 7;
+}
+
+// GetSignalInvitationRecordsResp 返回信号邀请记录。
+// total: 总数。
+// signalRecords: 信号记录列表。
+message GetSignalInvitationRecordsResp {
+  int32 total = 1;
+  repeated SignalRecord signalRecords = 2;
+}
+
+// DeleteSignalRecordsReq 请求删除信号记录。
+// sIDs: 信号的ID列表。
+message DeleteSignalRecordsReq {
+  repeated string sIDs = 1;
+}
+
+// DeleteSignalRecordsResp 删除信号记录的响应，目前为空。
+message DeleteSignalRecordsResp {
+}
+
+// RtcService 定义了RTC服务提供的功能。
+service RtcService {
+  // SignalMessageAssemble 组装信号消息。
+  rpc SignalMessageAssemble(SignalMessageAssembleReq) returns(SignalMessageAssembleResp);
+
+  // SignalGetRoomByGroupID 通过群组ID获取房间信息。
+  rpc SignalGetRoomByGroupID(SignalGetRoomByGroupIDReq) returns(SignalGetRoomByGroupIDResp);
+
+  // SignalGetTokenByRoomID 通过房间ID获取令牌。
+  rpc SignalGetTokenByRoomID(SignalGetTokenByRoomIDReq) returns(SignalGetTokenByRoomIDResp);
+
+  // SignalGetRooms 获取房间信息列表。
+  rpc SignalGetRooms(SignalGetRoomsReq) returns(SignalGetRoomsResp);
+
+  // GetSignalInvitationInfo 获取信号邀请信息。
+  rpc GetSignalInvitationInfo(GetSignalInvitationInfoReq) returns(GetSignalInvitationInfoResp);
+
+  // GetSignalInvitationInfoStartApp 在启动应用时获取信号邀请信息。
+  rpc GetSignalInvitationInfoStartApp(GetSignalInvitationInfoStartAppReq) returns(GetSignalInvitationInfoStartAppResp);
+
+  // SignalSendCustomSignal 发送自定义信号。
+  rpc SignalSendCustomSignal(SignalSendCustomSignalReq) returns(SignalSendCustomSignalResp);
+
+  // GetSignalInvitationRecords 获取信号邀请记录。
+  rpc GetSignalInvitationRecords(GetSignalInvitationRecordsReq) returns(GetSignalInvitationRecordsResp);
+// DeleteSignalRecords 删除信号记录。
+  rpc DeleteSignalRecords(DeleteSignalRecordsReq) returns(DeleteSignalRecordsResp);
+}

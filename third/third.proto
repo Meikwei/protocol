@@ -1,0 +1,309 @@
+/*
+ * @Author: zhangkaiwei 1126763237@qq.com
+ * @Date: 2024-05-12 19:02:40
+ * @LastEditors: zhangkaiwei 1126763237@qq.com
+ * @LastEditTime: 2024-05-12 19:10:04
+ * @FilePath: \protocol\third\third.proto
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+// Copyright © 2023 aetim. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+package aetim.third;
+import "sdkws/sdkws.proto";
+option go_package = "github.com/Meikwei/protocol/third";
+
+// 定义一个包含键和值的消息类型。
+message KeyValues {
+  string key = 1;
+  repeated string values = 2;
+}
+
+// 定义签名部分的消息类型。
+message SignPart {
+  int32 partNumber = 1; // 分片编号
+  string url = 2; // 分片上传的URL
+  repeated KeyValues query = 3; // 查询参数
+  repeated KeyValues header = 4; // 请求头部参数
+}
+
+// 定义授权签名分片的消息类型。
+message AuthSignParts {
+  string url = 1; // 统一的上传URL
+  repeated KeyValues query = 2; // 查询参数
+  repeated KeyValues header = 3; // 请求头部参数
+  repeated SignPart parts = 4; // 分片签名信息
+}
+
+// 定义分片大小限制请求消息类型。
+message PartLimitReq {
+}
+
+// 定义分片大小限制响应消息类型。
+message PartLimitResp {
+  int64 minPartSize = 1; // 最小分片大小
+  int64 maxPartSize = 2; // 最大分片大小
+  int32 maxNumSize = 3; // 最大分片数量
+}
+
+// 定义查询分片大小请求消息类型。
+message PartSizeReq {
+  int64 size = 1; // 查询的分片大小
+}
+
+// 定义查询分片大小响应消息类型。
+message PartSizeResp {
+  int64 size = 2; // 实际可用的分片大小
+}
+
+// 初始化分片上传请求消息类型。
+message InitiateMultipartUploadReq {
+  string hash = 1; // 文件哈希值
+  int64 size = 2; // 文件总大小
+  int64 partSize = 3; // 每个分片的大小
+  int32 maxParts = 4; // 最多允许的分片数量
+  string cause = 5; // 上传原因
+  string name = 6; // 文件名
+  string contentType = 7; // 文件内容类型
+  string urlPrefix = 8; // URL前缀
+}
+
+// 定义上传信息的消息类型。
+message UploadInfo {
+  string uploadID = 1; // 上传ID
+  int64 partSize = 2; // 分片大小
+  AuthSignParts sign = 3; // 签名信息
+  int64 expireTime = 4; // 过期时间
+}
+
+// 初始化分片上传响应消息类型。
+message InitiateMultipartUploadResp {
+  string url = 1; // 上传地址
+  UploadInfo upload = 2; // 上传信息
+}
+
+// 授权签名请求消息类型。
+message AuthSignReq {
+  string uploadID = 1; // 上传ID
+  repeated int32 partNumbers = 2; // 需要签名的分片编号
+}
+
+// 授权签名响应消息类型。
+message AuthSignResp {
+  string url = 1; // 签名后的上传地址
+  repeated KeyValues query = 2; // 查询参数
+  repeated KeyValues header = 3; // 头部参数
+  repeated SignPart parts = 4; // 签名分片信息
+}
+
+// 完成分片上传请求消息类型。
+message CompleteMultipartUploadReq {
+  string uploadID = 1; // 上传ID
+  repeated string parts = 2; // 已上传的分片信息
+  string name = 3; // 文件名
+  string contentType = 4; // 文件内容类型
+  string cause = 5; // 上传原因
+  string urlPrefix = 6; // URL前缀
+}
+
+// 完成分片上传响应消息类型。
+message CompleteMultipartUploadResp {
+  string url = 1; // 完成上传后的文件地址
+}
+
+// 请求访问URL的消息类型。
+message AccessURLReq {
+  string name = 1; // 文件名
+  map<string, string> query = 2; // 查询参数
+}
+
+// 访问URL响应消息类型。
+message AccessURLResp {
+  string url = 1; // 可访问的URL
+  int64 expireTime = 2; // URL过期时间
+}
+
+// 初始化表单数据上传请求消息类型。
+message InitiateFormDataReq {
+  string name = 1; // 文件名
+  int64 size = 2; // 文件大小
+  string contentType = 3; // 文件内容类型
+  string group = 4; // 分组
+  int64 millisecond = 5; // 过期时间（毫秒）
+  bool absolute = 6; // 是否为绝对过期时间
+}
+
+// 初始化表单数据上传响应消息类型。
+message InitiateFormDataResp {
+  string id = 1; // 上传ID
+  string url = 2; // 上传地址
+  string file = 3; // 文件字段名
+  repeated KeyValues header = 4; // 请求头部参数
+  map<string, string> formData = 5; // 表单数据
+  int64 expires = 6; // 过期时间
+  repeated int32 successCodes = 7; // 成功的HTTP状态码
+}
+
+// 完成表单数据上传请求消息类型。
+message CompleteFormDataReq {
+  string id = 1; // 上传ID
+  string urlPrefix = 2; // URL前缀
+}
+
+// 完成表单数据上传响应消息类型。
+message CompleteFormDataResp {
+  string url = 1; // 完成上传后的文件地址
+}
+
+// 更新FCM Token请求消息类型。
+message FcmUpdateTokenReq {
+  int32 platformID = 1; // 平台ID
+  string fcmToken = 2; // FCM Token
+  string account = 3; // 账号信息
+  int64 expireTime = 4; // Token过期时间
+}
+
+// FcmUpdateTokenResp 定义了FCM更新令牌响应的消息结构。
+message FcmUpdateTokenResp {
+}
+
+// SetAppBadgeReq 定义了设置应用角标请求的消息结构。
+// userID: 用户ID。
+// appUnreadCount: 应用未读计数。
+message SetAppBadgeReq {
+  string userID = 1;
+  int32 appUnreadCount = 2;
+}
+
+// SetAppBadgeResp 定义了设置应用角标响应的消息结构。
+message SetAppBadgeResp {
+}
+
+// fileURL 定义了文件URL的消息结构。
+// filename: 文件名。
+// URL: 文件的URL。
+message fileURL{
+  string filename = 1;
+  string URL = 2;
+}
+
+// UploadLogsReq 定义了上传日志请求的消息结构。
+// platform: 平台标识。
+// fileURLs: 文件URL的列表。
+// systemType: 系统类型。
+// version: 版本号。
+// ex: 额外信息。
+message UploadLogsReq{
+  int32 platform = 1;
+  repeated fileURL fileURLs = 2;
+  string systemType = 3;
+  string version = 5;
+  string ex = 4;
+}
+
+// UploadLogsResp 定义了上传日志响应的消息结构。
+message UploadLogsResp{
+}
+
+// DeleteLogsReq 定义了删除日志请求的消息结构。
+// logIDs: 日志ID的列表。
+message DeleteLogsReq{
+  repeated string logIDs = 1;
+}
+
+// DeleteLogsResp 定义了删除日志响应的消息结构。
+message DeleteLogsResp{
+}
+
+// SearchLogsReq 定义了搜索日志请求的消息结构。
+// keyword: 关键词。
+// startTime: 开始时间。
+// endTime: 结束时间。
+// pagination: 分页参数。
+message SearchLogsReq{
+  string keyword = 1;
+  int64 startTime = 2;
+  int64 endTime = 3;
+  sdkws.RequestPagination pagination = 4;
+}
+
+// LogInfo 定义了日志信息的消息结构。
+// userID: 用户ID。
+// platform: 平台标识。
+// url: 日志URL。
+// createTime: 创建时间。
+// nickname: 昵称。
+// logID: 日志ID。
+// filename: 文件名。
+// systemType: 系统类型。
+// ex: 额外信息。
+// version: 版本号。
+message LogInfo{
+  string userID = 1;
+  int32 platform = 2;
+  string url = 3;
+  int64 createTime = 4;
+  string nickname = 5;
+  string logID = 6;
+  string filename = 7;
+  string systemType = 8;
+  string ex = 9;
+  string version = 10;
+}
+
+// SearchLogsResp 定义了搜索日志响应的消息结构。
+// logsInfos: 日志信息的列表。
+// total: 总数。
+message SearchLogsResp{
+  repeated LogInfo logsInfos = 1;
+  uint32 total = 2;
+}
+
+// third 定义了与第三方服务相关的RPC方法。
+service third {
+  // PartLimit 提供了部分限制的RPC接口。
+  rpc PartLimit(PartLimitReq) returns(PartLimitResp);
+  // PartSize 提供了部分大小的RPC接口。
+  rpc PartSize(PartSizeReq) returns(PartSizeResp);
+  // InitiateMultipartUpload 初始化分片上传的RPC接口。
+  rpc InitiateMultipartUpload(InitiateMultipartUploadReq) returns(InitiateMultipartUploadResp);
+  // AuthSign 进行授权签名的RPC接口。
+  rpc AuthSign(AuthSignReq) returns(AuthSignResp);
+  // CompleteMultipartUpload 完成分片上传的RPC接口。
+  rpc CompleteMultipartUpload(CompleteMultipartUploadReq) returns(CompleteMultipartUploadResp);
+  // AccessURL 获取访问URL的RPC接口。
+  rpc AccessURL(AccessURLReq) returns(AccessURLResp);
+  // InitiateFormData 初始化表单数据上传的RPC接口。
+  rpc InitiateFormData(InitiateFormDataReq) returns(InitiateFormDataResp);
+  // CompleteFormData 完成表单数据上传的RPC接口。
+  rpc CompleteFormData(CompleteFormDataReq) returns(CompleteFormDataResp);
+
+  // FcmUpdateToken 更新FCM令牌的RPC接口。
+  rpc FcmUpdateToken(FcmUpdateTokenReq) returns(FcmUpdateTokenResp);
+  // SetAppBadge 设置应用角标的RPC接口。
+  rpc SetAppBadge(SetAppBadgeReq) returns(SetAppBadgeResp);
+  // UploadLogs 上传日志的RPC接口。
+  rpc UploadLogs(UploadLogsReq) returns (UploadLogsResp);
+  // DeleteLogs 删除日志的RPC接口。
+  rpc DeleteLogs(DeleteLogsReq) returns (DeleteLogsResp);
+  // SearchLogs 搜索日志的RPC接口。
+  rpc SearchLogs(SearchLogsReq) returns (SearchLogsResp);
+}
+
+
+
+
+
+
