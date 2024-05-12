@@ -1,0 +1,361 @@
+syntax = "proto3";
+package aetim.conversation;
+import "sdkws/sdkws.proto";
+import "wrapperspb/wrapperspb.proto";
+option go_package = "github.com/Meikwei/protocol/conversation";
+
+
+/**
+ * Conversation消息结构定义了会话的基本信息
+ */
+message Conversation{
+  string ownerUserID = 1; // 用户ID，会话的拥有者
+  string conversationID = 2; // 会话ID
+  int32 recvMsgOpt = 3; // 接收消息选项
+  int32 conversationType = 4; // 会话类型
+  string userID = 5; // 用户ID，参与会话的用户
+  string groupID = 6; // 群组ID，如果有的话
+  bool isPinned = 7; // 是否置顶
+  string attachedInfo = 8; // 附加信息
+  bool isPrivateChat = 9; // 是否是私聊
+  int32 groupAtType = 10; // 群组@类型
+  string ex = 11; // 扩展信息
+  int32 burnDuration = 12; // 消息燃烧时长
+  int64 minSeq = 13; // 最小序列号
+  int64 maxSeq = 14; // 最大序列号
+  int64 msgDestructTime = 15; // 消息销毁时间
+  int64 latestMsgDestructTime = 16; // 最新消息销毁时间
+  bool isMsgDestruct = 17; // 是否消息销毁
+}
+
+/**
+ * ConversationReq消息结构定义了获取会话请求的数据结构
+ */
+message ConversationReq{
+  string conversationID = 1; // 会话ID
+  int32 conversationType = 2; // 会话类型
+  string userID = 3; // 用户ID
+  string groupID = 4; // 群组ID，如果有的话
+  aetim.protobuf.Int32Value recvMsgOpt = 5; // 接收消息选项
+  aetim.protobuf.BoolValue isPinned = 6; // 是否置顶
+  aetim.protobuf.StringValue attachedInfo = 7; // 附加信息
+  aetim.protobuf.BoolValue isPrivateChat = 8; // 是否是私聊
+  aetim.protobuf.StringValue ex = 9; // 扩展信息
+  aetim.protobuf.Int32Value burnDuration = 10; // 消息燃烧时长
+  aetim.protobuf.Int64Value minSeq = 11; // 最小序列号
+  aetim.protobuf.Int64Value maxSeq = 12; // 最大序列号
+  aetim.protobuf.Int32Value groupAtType = 13; // 群组@类型
+  aetim.protobuf.Int64Value msgDestructTime = 14; // 消息销毁时间
+  aetim.protobuf.BoolValue isMsgDestruct = 15; // 是否消息销毁
+}
+
+/**
+ * SetConversationReq消息结构定义了设置会话请求的数据结构
+ */
+message SetConversationReq{
+  Conversation conversation = 1; // 会话信息
+}
+
+/**
+ * SetConversationResp消息结构定义了设置会话响应的数据结构
+ */
+message SetConversationResp{
+}
+
+/**
+ * GetConversationReq消息结构定义了获取会话请求的数据结构
+ */
+message GetConversationReq{
+  string conversationID = 1; // 会话ID
+  string ownerUserID = 2; // 用户ID，会话的拥有者
+}
+
+/**
+ * GetConversationResp消息结构定义了获取会话响应的数据结构
+ */
+message GetConversationResp{
+  Conversation conversation = 2; // 会话信息
+}
+
+/**
+ * GetSortedConversationListReq消息结构定义了获取排序后的会话列表请求的数据结构
+ */
+message GetSortedConversationListReq{
+  string userID = 1; // 用户ID
+  repeated string conversationIDs = 2; // 会话ID列表
+  sdkws.RequestPagination pagination = 3; // 分页信息
+}
+
+/**
+ * GetSortedConversationListResp消息结构定义了获取排序后的会话列表响应的数据结构
+ */
+message GetSortedConversationListResp{
+  int64 conversationTotal = 1; // 会话总数
+  int64 unreadTotal = 2; // 未读总数
+  repeated ConversationElem conversationElems = 3; // 会话元素列表
+}
+
+/**
+ * ConversationElem消息结构定义了会话元素的信息
+ */
+message ConversationElem {
+  string conversationID = 1; // 会话ID
+  int32 recvMsgOpt = 2; // 接收消息选项
+  int64 unreadCount = 3; // 未读消息数
+  bool IsPinned = 4; // 是否置顶
+  MsgInfo msgInfo = 5; // 最新消息信息
+}
+
+/**
+ * MsgInfo消息结构定义了消息的基本信息
+ */
+message MsgInfo{
+  string serverMsgID = 1; // 服务端消息ID
+  string clientMsgID = 2; // 客户端消息ID
+  int32 sessionType = 3; // 会话类型
+  string sendID = 4; // 发送者ID
+  string recvID = 5; // 接收者ID
+  string senderName = 6; // 发送者名称
+  string faceURL = 7; // 头像URL
+  string groupID = 8; // 群组ID，如果有的话
+  string groupName = 9; // 群组名称，如果有的话
+  string groupFaceURL = 10; // 群组头像URL，如果有的话
+  int32 groupType = 11; // 群组类型，如果有的话
+  uint32 groupMemberCount = 12; // 群组成员数量，如果有的话
+  int64 LatestMsgRecvTime = 13; // 最新消息接收时间
+  int32 msgFrom = 14; // 消息来源
+  int32 contentType = 15; // 消息类型
+  string content = 16; // 消息内容
+  string ex = 17; // 扩展信息
+}
+
+/**
+ * GetConversationsReq消息结构定义了获取多个会话请求的数据结构
+ */
+message GetConversationsReq{
+  string ownerUserID = 1; // 用户ID，会话的拥有者
+  repeated string conversationIDs = 2; // 会话ID列表
+}
+
+/**
+ * GetConversationsResp消息结构定义了获取多个会话响应的数据结构
+ */
+message GetConversationsResp{
+  repeated Conversation conversations = 2; // 会话列表
+}
+
+/**
+ * GetAllConversationsReq消息结构定义了获取所有会话请求的数据结构
+ */
+message GetAllConversationsReq{
+  string ownerUserID = 1; // 用户ID，会话的拥有者
+}
+
+/**
+ * GetAllConversationsResp消息结构定义了获取所有会话响应的数据结构
+ */
+message GetAllConversationsResp{
+  repeated Conversation conversations = 2; // 会话列表
+}
+
+/**
+ * GetRecvMsgNotNotifyUserIDsReq消息结构定义了获取不通知接收消息的用户ID请求的数据结构
+ */
+message GetRecvMsgNotNotifyUserIDsReq {
+  string groupID = 1; // 群组ID
+}
+
+/**
+ * GetRecvMsgNotNotifyUserIDsResp消息结构定义了获取不通知接收消息的用户ID响应的数据结构
+ */
+message GetRecvMsgNotNotifyUserIDsResp {
+  repeated string userIDs = 1; // 用户ID列表
+}
+
+/**
+ * CreateSingleChatConversationsReq消息结构定义了创建单聊会话请求的数据结构
+ */
+message CreateSingleChatConversationsReq {
+  string recvID = 1; // 接收者ID
+  string sendID = 2; // 发送者ID
+  string conversationID = 3; // 会话ID
+  int32 conversationType = 4; // 会话类型
+}
+
+/**
+ * CreateSingleChatConversationsResp消息结构定义了创建单聊会话响应的数据结构
+ */
+message CreateSingleChatConversationsResp {
+}
+
+/**
+ * CreateGroupChatConversationsReq消息结构定义了创建群聊会话请求的数据结构
+ */
+message CreateGroupChatConversationsReq {
+  repeated string userIDs = 1; // 用户ID列表
+  string groupID = 2; // 群组ID
+}
+
+/**
+ * CreateGroupChatConversationsResp消息结构定义了创建群聊会话响应的数据结构
+ */
+message CreateGroupChatConversationsResp {
+}
+
+/**
+ * SetConversationMaxSeqReq消息结构定义了设置会话最大序列号请求的数据结构
+ */
+message SetConversationMaxSeqReq {
+  string conversationID = 1; // 会话ID
+  repeated string ownerUserID = 2; // 用户ID列表
+  int64 maxSeq = 3; // 最大序列号
+}
+
+// 定义SetConversationMaxSeqResp消息，用于设置会话的最大序列号响应
+message SetConversationMaxSeqResp {
+}
+
+// 定义GetConversationIDsReq消息，用于请求获取会话ID列表
+// userID: 用户ID
+message GetConversationIDsReq {
+  string userID = 1;
+}
+
+// 定义GetConversationIDsResp消息，用于响应获取会话ID列表
+// conversationIDs: 会话ID的列表
+message GetConversationIDsResp {
+  repeated string conversationIDs = 1;
+}
+
+// 定义SetConversationsReq消息，用于设置多个会话
+// userIDs: 用户ID列表
+// conversation: 会话信息
+message SetConversationsReq {
+  repeated string userIDs = 1;
+  ConversationReq conversation = 2;
+}
+
+// 定义SetConversationsResp消息，用于设置会话的响应
+message SetConversationsResp {
+}
+
+// 定义GetUserConversationIDsHashReq消息，用于请求获取用户会话ID的哈希值
+// ownerUserID: 拥有者用户ID
+message GetUserConversationIDsHashReq {
+  string ownerUserID = 1;
+}
+
+// 定义GetUserConversationIDsHashResp消息，用于响应获取用户会话ID的哈希值
+// hash: 会话ID的哈希值
+message GetUserConversationIDsHashResp {
+  uint64 hash = 1;
+}
+
+// 定义GetConversationsByConversationIDReq消息，用于根据会话ID获取会话信息列表的请求
+// conversationIDs: 会话ID列表
+message GetConversationsByConversationIDReq {
+  repeated string conversationIDs = 1;
+}
+
+// 定义GetConversationsByConversationIDResp消息，用于根据会话ID获取会话信息列表的响应
+// conversations: 会话信息列表
+message GetConversationsByConversationIDResp {
+  repeated Conversation conversations = 1;
+}
+
+// 定义GetConversationOfflinePushUserIDsReq消息，用于请求获取会话离线推送的用户ID列表
+// conversationID: 会话ID
+// userIDs: 用户ID列表
+message GetConversationOfflinePushUserIDsReq {
+  string conversationID = 1;
+  repeated string userIDs = 2;
+}
+
+// 定义GetConversationOfflinePushUserIDsResp消息，用于响应获取会话离线推送的用户ID列表
+// userIDs: 离线推送的用户ID列表
+message GetConversationOfflinePushUserIDsResp {
+  repeated string userIDs = 1;
+}
+
+// 定义GetConversationNotReceiveMessageUserIDsReq消息，用于请求获取不接收会话消息的用户ID列表
+// conversationID: 会话ID
+message GetConversationNotReceiveMessageUserIDsReq {
+  string conversationID = 1;
+}
+
+// 定义GetConversationNotReceiveMessageUserIDsResp消息，用于响应获取不接收会话消息的用户ID列表
+// userIDs: 不接收消息的用户ID列表
+message GetConversationNotReceiveMessageUserIDsResp {
+  repeated string userIDs = 1;
+}
+
+// 定义UpdateConversationReq消息，用于更新会话信息的请求
+// conversationID: 会话ID
+// userIDs: 用户ID列表
+// recvMsgOpt: 接收消息选项
+// isPinned: 是否置顶
+// attachedInfo: 附加信息
+// isPrivateChat: 是否为私聊
+// ex: 扩展信息
+// burnDuration: 焚烧时间
+// minSeq: 最小序列号
+// maxSeq: 最大序列号
+// groupAtType: 群@类型
+// msgDestructTime: 消息销毁时间
+// isMsgDestruct: 是否消息销毁
+// isPrivateChat: 是否私聊
+message UpdateConversationReq {
+  string conversationID = 1;
+  repeated string userIDs = 2;
+  aetim.protobuf.Int32Value recvMsgOpt = 3;
+  aetim.protobuf.BoolValue isPinned = 4;
+  aetim.protobuf.StringValue attachedInfo = 5;
+  aetim.protobuf.BoolValue isPrivateChat = 6;
+  aetim.protobuf.StringValue ex = 7;
+  aetim.protobuf.Int32Value burnDuration = 8;
+  aetim.protobuf.Int64Value minSeq = 9;
+  aetim.protobuf.Int64Value maxSeq = 10;
+  aetim.protobuf.Int32Value groupAtType = 11;
+  aetim.protobuf.Int64Value msgDestructTime = 12;
+  aetim.protobuf.BoolValue isMsgDestruct = 13;
+}
+
+// 定义UpdateConversationResp消息，用于更新会话信息的响应
+message UpdateConversationResp {
+}
+
+// conversation服务定义了与会话相关的操作
+service conversation {
+  // GetConversation获取指定会话的信息
+  rpc GetConversation(GetConversationReq)returns(GetConversationResp);
+  // GetSortedConversationList获取排序后的会话列表
+  rpc GetSortedConversationList(GetSortedConversationListReq)returns(GetSortedConversationListResp);
+  // GetAllConversations获取所有会话
+  rpc GetAllConversations(GetAllConversationsReq)returns(GetAllConversationsResp);
+  // GetConversations根据指定条件获取会话列表
+  rpc GetConversations(GetConversationsReq)returns(GetConversationsResp);
+  // SetConversation设置指定会话的信息
+  rpc SetConversation(SetConversationReq)returns(SetConversationResp);
+  // GetRecvMsgNotNotifyUserIDs获取接收消息不通知的用户ID列表
+  rpc GetRecvMsgNotNotifyUserIDs(GetRecvMsgNotNotifyUserIDsReq) returns (GetRecvMsgNotNotifyUserIDsResp);
+  // CreateSingleChatConversations创建单聊会话
+  rpc CreateSingleChatConversations(CreateSingleChatConversationsReq) returns (CreateSingleChatConversationsResp);
+  // CreateGroupChatConversations创建群聊会话
+  rpc CreateGroupChatConversations(CreateGroupChatConversationsReq) returns (CreateGroupChatConversationsResp);
+  // SetConversationMaxSeq设置会话的最大序列号
+  rpc SetConversationMaxSeq(SetConversationMaxSeqReq) returns(SetConversationMaxSeqResp);
+  // GetConversationIDs获取用户的会话ID列表
+  rpc GetConversationIDs(GetConversationIDsReq) returns(GetConversationIDsResp);
+  // SetConversations设置多个会话的信息
+  rpc SetConversations(SetConversationsReq) returns(SetConversationsResp);
+  // GetUserConversationIDsHash获取用户的会话ID哈希值
+  rpc GetUserConversationIDsHash(GetUserConversationIDsHashReq) returns(GetUserConversationIDsHashResp);
+  // GetConversationsByConversationID根据会话ID获取会话信息列表
+  rpc GetConversationsByConversationID(GetConversationsByConversationIDReq) returns(GetConversationsByConversationIDResp);
+  // GetConversationOfflinePushUserIDs获取会话离线推送的用户ID列表
+  rpc GetConversationOfflinePushUserIDs(GetConversationOfflinePushUserIDsReq) returns(GetConversationOfflinePushUserIDsResp);
+  // GetConversationNotReceiveMessageUserIDs获取不接收会话消息的用户ID列表
+  rpc GetConversationNotReceiveMessageUserIDs(GetConversationNotReceiveMessageUserIDsReq) returns(GetConversationNotReceiveMessageUserIDsResp);
+  // UpdateConversation更新会话信息
+  rpc UpdateConversation(UpdateConversationReq) returns(UpdateConversationResp);
+}

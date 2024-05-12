@@ -1,0 +1,59 @@
+
+syntax = "proto3";
+// 定义包名称为aetim.protobuf，并指定Go语言的导入路径。
+package aetim.protobuf;
+option go_package = "github.com/Meikwei/protocol/wrapperspb";
+
+// DoubleValue为`double`类型的数据提供包装。
+// 它使得`double`类型的数值能够在Proto3中以更灵活的方式进行序列化和反序列化。
+message DoubleValue {
+  double value = 1; // 存储`double`类型的数值。
+}
+
+// FloatValue为`float`类型的数据提供包装。
+// 它使得`float`类型的数值能够在Proto3中以更灵活的方式进行序列化和反序列化。
+message FloatValue {
+  float value = 1; // 存储`float`类型的数值。
+}
+
+// Int64Value为`int64`类型的数据提供包装。
+// 由于JSON中没有直接对应64位有符号整型的方式，因此使用字符串进行表示。
+message Int64Value {
+  int64 value = 1; // 存储`int64`类型的数值。
+}
+
+// UInt64Value为`uint64`类型的数据提供包装。
+// 由于JSON中没有直接对应64位无符号整型的方式，因此使用字符串进行表示。
+message UInt64Value {
+  uint64 value = 1; // 存储`uint64`类型的数值。
+}
+
+// Int32Value为`int32`类型的数据提供包装。
+// 它使得`int32`类型的数值能够在Proto3中以更灵活的方式进行序列化和反序列化。
+message Int32Value {
+  int32 value = 1; // 存储`int32`类型的数值。
+}
+
+// UInt32Value为`uint32`类型的数据提供包装。
+// 它使得`uint32`类型的数值能够在Proto3中以更灵活的方式进行序列化和反序列化。
+message UInt32Value {
+  uint32 value = 1; // 存储`uint32`类型的数值。
+}
+
+// BoolValue为`bool`类型的数据提供包装。
+// 它使得布尔值能够在Proto3中以更一致的方式进行处理和转换为JSON格式。
+message BoolValue {
+  bool value = 1; // 存储布尔值。
+}
+
+// StringValue为`string`类型的数据提供包装。
+// 它使得字符串能够在Proto3中以更灵活的方式进行序列化和反序列化。
+message StringValue {
+  string value = 1; // 存储字符串值。
+}
+
+// BytesValue为`bytes`类型的数据提供包装。
+// `bytes`类型通常用于存储二进制数据，这里将其包装以便于在Proto3和JSON之间进行转换。
+message BytesValue {
+  bytes value = 1; // 存储二进制数据。
+}

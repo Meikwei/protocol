@@ -1,0 +1,476 @@
+syntax = "proto3";
+package aetim.user;
+import "sdkws/sdkws.proto";
+import "conversation/conversation.proto";
+import "wrapperspb/wrapperspb.proto";
+option go_package="github.com/Meikwei/protocol/user";
+
+
+// getAllUserIDReq 请求获取所有用户ID
+// pagination 分页参数
+message getAllUserIDReq{
+  sdkws.RequestPagination pagination = 1;
+}
+
+// getAllUserIDResp 获取所有用户ID的响应
+// total 总用户数
+// userIDs 用户ID列表
+message getAllUserIDResp{
+  int32 total = 1;
+  repeated string userIDs = 2;
+}
+
+// accountCheckReq 请求检查多个账户状态
+// checkUserIDs 需要检查的用户ID列表
+message accountCheckReq{
+  repeated string checkUserIDs = 1;
+}
+
+// accountCheckResp 检查账户状态的响应
+// results 单个用户状态的结果列表
+message accountCheckResp{
+  message singleUserStatus {
+    string userID = 1; // 用户ID
+    string accountStatus = 2; // 账户状态
+  }
+  repeated singleUserStatus results = 1;
+}
+
+// getDesignateUsersReq 请求获取指定用户信息
+// userIDs 指定的用户ID列表
+message getDesignateUsersReq{
+  repeated string userIDs = 1;
+}
+
+// getDesignateUsersResp 获取指定用户信息的响应
+// usersInfo 用户信息列表
+message getDesignateUsersResp{
+  repeated sdkws.UserInfo usersInfo = 1;
+}
+
+// updateUserInfoReq 更新用户信息的请求
+// userInfo 要更新的用户信息
+message updateUserInfoReq{
+  sdkws.UserInfo userInfo = 1;
+}
+
+// updateUserInfoResp 更新用户信息的响应（空响应）
+message updateUserInfoResp{
+}
+
+// updateUserInfoExReq 更新扩展用户信息的请求
+// userInfo 要更新的包含扩展信息的用户信息
+message updateUserInfoExReq{
+  sdkws.UserInfoWithEx userInfo = 1;
+}
+
+// updateUserInfoExResp 更新扩展用户信息的响应（空响应）
+message updateUserInfoExResp{
+}
+
+// setGlobalRecvMessageOptReq 设置全局接收消息选项的请求
+// userID 用户ID
+// globalRecvMsgOpt 全局接收消息选项
+message setGlobalRecvMessageOptReq{
+  string userID = 1;
+  int32 globalRecvMsgOpt = 3;
+}
+
+// setGlobalRecvMessageOptResp 设置全局接收消息选项的响应（空响应）
+message setGlobalRecvMessageOptResp{
+}
+
+// setConversationReq 设置会话属性的请求
+// conversation 会话信息
+// notificationType 通知类型
+// operationID 操作ID
+message setConversationReq{
+  aetim.conversation.Conversation conversation = 1;
+  int32 notificationType = 2;
+  string operationID = 3;
+}
+
+// setConversationResp 设置会话属性的响应（空响应）
+message setConversationResp{
+
+}
+
+// setRecvMsgOptReq 设置会话接收消息选项的请求
+// ownerUserID 拥有者用户ID
+// conversationID 会话ID
+// recvMsgOpt 接收消息选项
+// notificationType 通知类型
+// operationID 操作ID
+message setRecvMsgOptReq {
+  string ownerUserID = 1;
+  string conversationID = 2;
+  int32 recvMsgOpt = 3;
+  int32 notificationType = 4;
+  string operationID = 5;
+}
+
+// setRecvMsgOptResp 设置会话接收消息选项的响应（空响应）
+message setRecvMsgOptResp {
+
+}
+
+// getConversationReq 获取会话信息的请求
+// conversationID 会话ID
+// ownerUserID 拥有者用户ID
+// operationID 操作ID
+message getConversationReq{
+  string conversationID = 1;
+  string ownerUserID = 2;
+  string operationID = 3;
+}
+
+// getConversationResp 获取会话信息的响应
+// conversation 会话信息
+message getConversationResp{
+  aetim.conversation.Conversation conversation = 2;
+}
+
+// getConversationsReq 请求获取多个会话信息的请求
+// ownerUserID 拥有者用户ID
+// conversationIDs 会话ID列表
+// operationID 操作ID
+message getConversationsReq{
+  string ownerUserID = 1;
+  repeated string conversationIDs = 2;
+  string operationID = 3;
+}
+
+// getConversationsResp 获取多个会话信息的响应
+// conversations 会话信息列表
+message getConversationsResp{
+  repeated aetim.conversation.Conversation conversations = 2;
+}
+
+// getAllConversationsReq 请求获取所有会话信息的请求
+// ownerUserID 拥有者用户ID
+// operationID 操作ID
+message getAllConversationsReq{
+  string ownerUserID = 1;
+  string operationID = 2;
+}
+
+// getAllConversationsResp 获取所有会话信息的响应
+// conversations 所有会话信息列表
+message getAllConversationsResp{
+  repeated aetim.conversation.Conversation conversations = 2;
+}
+
+// 批量设置对话信息请求
+message batchSetConversationsReq{
+  repeated aetim.conversation.Conversation conversations = 1; // 对话列表
+  string OwnerUserID = 2; // 用户ID
+  int32 notificationType = 3; // 通知类型
+  string OperationID = 4; // 操作ID
+}
+
+// 批量设置对话信息响应
+message batchSetConversationsResp{
+  repeated string Success = 2; // 成功的对话ID列表
+  repeated string Failed = 3; // 失败的对话ID列表
+}
+
+// 获取分页用户列表请求
+message getPaginationUsersReq {
+  sdkws.RequestPagination pagination = 2; // 分页信息
+  string userID = 3; // 用户ID
+  string nickName = 4; // 用户昵称
+}
+
+// 获取分页用户列表响应
+message getPaginationUsersResp{
+  int32 total = 1; // 总数
+  repeated sdkws.UserInfo users = 2; // 用户信息列表
+}
+
+// 用户注册请求
+message userRegisterReq {
+  string secret = 1; // 密码
+  repeated sdkws.UserInfo users = 2; // 用户信息列表
+}
+
+// 用户注册响应
+message userRegisterResp {
+}
+
+// 获取全局接收消息选项请求
+message getGlobalRecvMessageOptReq{
+  string userID = 1; // 用户ID
+}
+
+// 获取全局接收消息选项响应
+message getGlobalRecvMessageOptResp{
+  int32 globalRecvMsgOpt = 1; // 全局接收消息选项
+}
+
+// 用户注册数量请求
+message userRegisterCountReq {
+  int64 start = 1; // 开始时间
+  int64 end = 2; // 结束时间
+}
+
+// 用户注册数量响应
+message userRegisterCountResp {
+  int64 total = 1; // 总数量
+  int64 before = 2; // 之前的数量
+  map<string, int64> count = 3; // 按类型统计的数量
+}
+
+// 订阅或取消用户状态请求
+message subscribeOrCancelUsersStatusReq{
+  string userID = 1; // 用户ID
+  repeated string userIDs = 2; // 目标用户ID列表
+  int32 genre = 3; // 类型
+}
+
+// 订阅或取消用户状态响应
+message subscribeOrCancelUsersStatusResp{
+  repeated onlineStatus statusList = 1; // 状态列表
+}
+
+// 获取订阅用户状态请求
+message getSubscribeUsersStatusReq{
+  string userID = 1; // 用户ID
+}
+
+// 获取订阅用户状态响应
+message getSubscribeUsersStatusResp{
+  repeated onlineStatus statusList = 1; // 状态列表
+}
+
+// 在线状态信息
+message onlineStatus {
+  string userID = 1; // 用户ID
+  int32 status = 2; // 状态
+  repeated int32 platformIDs = 3; // 平台ID列表
+}
+
+// 获取用户状态请求
+message getUserStatusReq {
+  string  userID = 1; // 用户ID
+  repeated string userIDs = 2; // 目标用户ID列表
+}
+
+// 获取用户状态响应
+message getUserStatusResp{
+  repeated onlineStatus statusList = 1; // 状态列表
+}
+
+// 设置用户状态请求
+message setUserStatusReq{
+  string userID = 1; // 用户ID
+  int32 status = 2; // 状态
+  int32 platformID = 3; // 平台ID
+  string connID = 4; // 连接ID
+  bool isBackground = 5; // 是否后台
+}
+
+// 设置用户状态响应
+message setUserStatusResp {
+}
+
+// 处理用户指令添加请求
+message processUserCommandAddReq {
+  string userID = 1; // 用户ID
+  int32 type = 2; // 指令类型
+  string uuid = 3; // UUID
+  aetim.protobuf.StringValue value = 4; // 值
+  aetim.protobuf.StringValue ex = 5; // 额外信息
+}
+
+// 处理用户指令添加响应
+message processUserCommandAddResp {
+}
+
+// 处理用户指令删除请求
+message processUserCommandDeleteReq {
+  string userID = 1; // 用户ID
+  int32 type = 2; // 指令类型
+  string uuid = 3; // UUID
+}
+
+// 处理用户指令删除响应
+message processUserCommandDeleteResp {
+}
+
+// 处理用户指令更新请求
+message processUserCommandUpdateReq {
+  string userID = 1; // 用户ID
+  int32 type = 2; // 指令类型
+  string uuid = 3; // UUID
+  aetim.protobuf.StringValue value = 4; // 值
+  aetim.protobuf.StringValue ex = 5; // 额外信息
+}
+
+// 处理用户指令更新响应
+message processUserCommandUpdateResp {
+}
+
+// 获取用户指令请求
+message processUserCommandGetReq {
+  string userID = 1; // 用户ID
+  int32 type = 2; // 指令类型
+}
+
+// 指令信息响应
+message CommandInfoResp {
+
+  int32 type = 1; // 指令类型
+  int64 createTime = 2; // 创建时间
+  string uuid = 3; // UUID
+  string value = 4; // 值
+  string ex = 5; // 额外信息
+}
+
+// 获取用户指令响应
+message processUserCommandGetResp {
+  repeated CommandInfoResp CommandResp = 1; // 指令列表响应
+}
+
+// 获取所有用户指令请求
+message processUserCommandGetAllReq {
+  string userID = 1; // 用户ID
+}
+
+// 所有指令信息响应
+message AllCommandInfoResp {
+  int32 type = 1; // 指令类型
+  int64 createTime = 2; // 创建时间
+  string uuid = 3; // UUID
+  string value = 4; // 值
+  string ex = 5; // 额外信息
+}
+
+// 获取所有用户指令响应
+message processUserCommandGetAllResp {
+  repeated AllCommandInfoResp CommandResp = 1; // 所有指令列表响应
+}
+
+// 添加通知账号请求
+message addNotificationAccountReq{
+  string userID = 1; // 用户ID
+  string nickName = 2; // 昵称
+  string faceURL = 3; // 头像URL
+}
+
+// 添加通知账号响应
+message addNotificationAccountResp{
+  string userID = 1; // 用户ID
+  string faceURL = 2; // 头像URL
+  string nickName = 3; // 昵称
+}
+
+// 更新通知账号信息请求
+message updateNotificationAccountInfoReq{
+  string userID = 1; // 用户ID
+  string faceURL = 2; // 头像URL
+  string nickName = 3; // 昵称
+}
+
+// 更新通知账号信息响应
+message updateNotificationAccountInfoResp{
+}
+
+// 搜索通知账号请求
+message searchNotificationAccountReq{
+  string keyword = 1; // 关键词
+  sdkws.RequestPagination pagination = 3; // 分页信息
+}
+
+// 通知账号信息
+message notificationAccountInfo{
+  string userID = 1; // 用户ID
+  string faceURL = 2; // 头像URL
+  string nickName = 3; // 昵称
+}
+
+// 搜索通知账号响应
+message searchNotificationAccountResp{
+  int64 total = 1; // 总数
+  repeated notificationAccountInfo notificationAccounts = 2; // 通知账号列表
+}
+
+// 获取通知账号请求
+message getNotificationAccountReq{
+  string userID = 1; // 用户ID
+}
+
+// 获取通知账号响应
+message getNotificationAccountResp{
+}
+
+// user服务定义了用户相关的操作，包括用户信息的获取、更新、订阅状态管理等。
+service user {
+  // 获取指定用户信息全字段
+  rpc getDesignateUsers(getDesignateUsersReq) returns(getDesignateUsersResp);
+  
+  // 更新用户信息
+  rpc updateUserInfo(updateUserInfoReq) returns(updateUserInfoResp);
+  
+  // 扩展方式更新用户信息
+  rpc updateUserInfoEx(updateUserInfoExReq) returns(updateUserInfoExResp);
+  
+  // 设置用户消息接收选项
+  rpc setGlobalRecvMessageOpt(setGlobalRecvMessageOptReq) returns(setGlobalRecvMessageOptResp);
+  
+  // 获取用户消息接收选项，未找到时不返回错误
+  rpc getGlobalRecvMessageOpt(getGlobalRecvMessageOptReq) returns(getGlobalRecvMessageOptResp);
+  
+  // 检查userID是否存在
+  rpc accountCheck(accountCheckReq) returns (accountCheckResp);
+  
+  // 分页（或指定userID、nickname）拉取用户信息全字段
+  rpc getPaginationUsers(getPaginationUsersReq) returns (getPaginationUsersResp);
+  
+  // 用户注册
+  rpc userRegister(userRegisterReq) returns (userRegisterResp);
+  
+  // 获取所有用户ID
+  rpc getAllUserID(getAllUserIDReq) returns (getAllUserIDResp);
+  
+  // 获取指定时间段内用户总数和用户增量
+  rpc userRegisterCount(userRegisterCountReq)returns(userRegisterCountResp);
+  
+  // 订阅或取消用户状态订阅
+  rpc subscribeOrCancelUsersStatus(subscribeOrCancelUsersStatusReq)returns(subscribeOrCancelUsersStatusResp);
+  
+  // 获取订阅者在线状态
+  rpc getSubscribeUsersStatus(getSubscribeUsersStatusReq)returns(getSubscribeUsersStatusResp);
+  
+  // 获取用户在线状态
+  rpc getUserStatus(getUserStatusReq)returns(getUserStatusResp);
+  
+  // 网关同步用户在redis中的在线状态
+  rpc setUserStatus(setUserStatusReq)returns(setUserStatusResp);
+  
+  // 添加通用添加功能
+  rpc processUserCommandAdd(processUserCommandAddReq)returns(processUserCommandAddResp);
+  
+  // 添加通用更新功能
+  rpc processUserCommandUpdate(processUserCommandUpdateReq)returns(processUserCommandUpdateResp);
+  
+  // 添加通用删除功能
+  rpc processUserCommandDelete(processUserCommandDeleteReq)returns(processUserCommandDeleteResp);
+  
+  // 添加通用获取功能
+  rpc processUserCommandGet(processUserCommandGetReq)returns(processUserCommandGetResp);
+  
+  // 添加通用获取全部功能
+  rpc processUserCommandGetAll(processUserCommandGetAllReq)returns(processUserCommandGetAllResp);
+  
+  // 添加系统通知账号
+  rpc addNotificationAccount(addNotificationAccountReq)returns(addNotificationAccountResp);
+  
+  // 更新系统通知信息
+  rpc updateNotificationAccountInfo(updateNotificationAccountInfoReq)returns(updateNotificationAccountInfoResp);
+  
+  // 搜索系统通知账号
+  rpc searchNotificationAccount(searchNotificationAccountReq)returns(searchNotificationAccountResp);
+  
+  // 根据userID获取通知账号
+  rpc getNotificationAccount(getNotificationAccountReq)returns(getNotificationAccountResp);
+}
