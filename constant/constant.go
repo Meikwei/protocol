@@ -127,6 +127,7 @@ const (
 	// 会话类型
 	SingleChatType = 1 // 单聊
 	// WriteGroupChatType Not enabled temporarily // 暂未启用的群聊发送类型
+	WriteGroupChatType   = 2
 	ReadGroupChatType    = 3 // 群聊（只读）
 	NotificationChatType = 4 // 通知会话类型
 

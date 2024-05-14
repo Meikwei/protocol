@@ -2,11 +2,14 @@
 setlocal
 
 rem Define array elements
-set "PROTO_NAMES=third"
+set "PROTO_NAMES=auth conversation errinfo friend group msg msggateway push rtc sdkws third user statistics wrapperspb"
 
 rem Loop through each element in the array
 for %%i in (%PROTO_NAMES%) do (
+    rem Generate Go code for Protobuf
     protoc --go_out=./%%i --go_opt=module=github.com/Meikwei/protocol/%%i %%i/%%i.proto
+    rem Generate Go gRPC code for Protobuf
+    protoc --go-grpc_out=./%%i --go-grpc_opt=module=github.com/Meikwei/protocol/%%i %%i/%%i.proto
     if ERRORLEVEL 1 (
         echo error processing %%i.proto
         exit /b %ERRORLEVEL%
